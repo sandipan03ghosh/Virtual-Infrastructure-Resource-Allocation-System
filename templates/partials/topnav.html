@@ -1,0 +1,72 @@
+<!--Topside-->
+<div class="mx-auto max-w-6xl px-4">
+  <div class="flex flex-wrap -mx-2 mt-4">
+    <div class="w-full md:w-1/3 px-2">
+      <div class="rounded-lg shadow border border-gray-200 bg-white">
+        <div class="bg-blue-600 text-white px-4 py-2 rounded-t-lg">
+          Information
+
+          <a
+            href="{% url 'edit-information' %}"
+            class="inline-block px-4 py-2 rounded font-medium text-white bg-gray-500 hover:bg-gray-600 md:ml-[41.6667%]"
+            >Edit</a
+          >
+        </div>
+        <div class="p-4">
+          {% if information_content %}
+          <marquee behavior="" direction="">
+            <h2 class="my-4">{{ information_content }}</h2>
+          </marquee>
+          {% else %}
+          <marquee behavior="" direction="">
+            <h2 class="my-4">Check here for new message</h2>
+          </marquee>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="w-full md:w-2/3 px-2">
+      <div class="rounded-lg shadow border border-gray-200 bg-white">
+        <div class="bg-blue-600 text-white px-4 py-2 rounded-t-lg">Statistics</div>
+        <div class="p-4">
+          <div class="flex flex-wrap -mx-2">
+            <div class="w-full md:w-1/3 px-2">
+              <a
+                class="no-underline text-gray-900"
+                href="{% url 'dashboard-staff' %}"
+              >
+                <div class="rounded-lg shadow text-center p-3 hover:scale-110 transition-transform duration-200">
+                  <h4>Transaction Operators<i class="fas fa-users"></i></h4>
+                  <h3>{{workers_count}}</h3>
+                </div>
+              </a>
+            </div>
+            <div class="w-full md:w-1/3 px-2">
+              <a
+                class="no-underline text-gray-900"
+                href="{% url 'dashboard-resource' %}"
+              >
+                <div class="rounded-lg shadow text-center p-3 hover:scale-110 transition-transform duration-200">
+                  <h4>Database Resources <i class="fas fa-box"></i></h4>
+                  <h3>{{resources_count}}</h3>
+                </div>
+              </a>
+            </div>
+            <div class="w-full md:w-1/3 px-2">
+              <a
+                class="no-underline text-gray-900"
+                href="{% url 'dashboard-transactions' %}"
+              >
+                <div class="rounded-lg shadow text-center p-3 hover:scale-110 transition-transform duration-200">
+                  <h4>Database Transactions <i class="fas fa-shipping-fast"></i></h4>
+                  <h3>{{orders_count}}</h3>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End Topside-->

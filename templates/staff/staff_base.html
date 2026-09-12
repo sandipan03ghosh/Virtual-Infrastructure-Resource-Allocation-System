@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!--Chartjs CDN-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <!--Tailwind CSS (built via npm run build:css)-->
+    <link rel="stylesheet" href="{% static 'dist/style.css' %}" />
+
+    <title>{% block title %} {% endblock %} | Keystone Transaction Management Platform</title>
+  </head>
+  <body class="bg-neutral-200">
+    <!--Navbar-->
+    <nav class="bg-blue-600">
+      {% if user.is_authenticated %}
+      <div class="mx-auto max-w-6xl px-4 flex flex-wrap items-center justify-between py-3">
+        <a class="text-white font-semibold" href="{% url 'dashboard-index' %}"
+          >Keystone Transaction Management Platform</a
+        >
+        <button
+          class="md:hidden text-white"
+          type="button"
+          data-navbar-toggle
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+
+        <div class="hidden md:flex md:items-center md:justify-between w-full md:w-auto" id="navbarSupportedContent">
+          <ul class="flex flex-col md:flex-row md:mr-auto">
+            <li>
+              <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'dashboard-index' %}"
+                >Dashboard <span class="sr-only">(current)</span></a
+              >
+            </li>
+          </ul>
+          <ul class="flex flex-col md:flex-row md:ml-auto">
+            <li>
+              <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'user-profile' %}"
+                >{{user.username}} Profile
+                <span class="sr-only">(current)</span></a
+              >
+            </li>
+            <li>
+              <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'user-logout' %}"
+                >Logout</a
+              >
+            </li>
+          </ul>
+          {% else %}
+          <ul class="flex flex-col md:flex-row md:ml-auto">
+            <li>
+              <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'user-register' %}"
+                >Register <span class="sr-only">(current)</span></a
+              >
+            </li>
+            <li>
+              <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'user-login' %}"
+                >Login</a
+              >
+            </li>
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    {% comment %} {% include 'partials/topnav.html' %} {% endcomment %}
+    {% block content %}
+    {% endblock %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var toggler = document.querySelector('[data-navbar-toggle]');
+        var panel = document.getElementById('navbarSupportedContent');
+        if (toggler && panel) {
+          toggler.addEventListener('click', function () {
+            var isHidden = panel.classList.toggle('hidden');
+            toggler.setAttribute('aria-expanded', String(!isHidden));
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{% extends 'partials/base.html'%} {% block title %}  Resource Delete {% endblock %}
+    {% block content %}
+    
+    <div class="mx-auto max-w-6xl px-4">
+      <div class="flex flex-wrap -mx-2 my-4">
+        <div class="w-full md:w-1/2 px-2 md:ml-[25%]">
+          <div class="border border-gray-300 bg-white p-3">
+            <h3>Delete Item</h3>
+            <hr />
+            <div class="alert alert-danger">
+              <h4>Are you sure you want to delete?</h4>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <a class="inline-block px-4 py-2 rounded font-medium text-white bg-gray-500 hover:bg-gray-600" href="{% url 'staff-resource' %}">Cancel</a>
+              <input class="inline-block px-4 py-2 rounded font-medium text-white bg-red-600 hover:bg-red-700" type="submit" value="confirm" />
+            </form>
+          </div>
+        </div>
+
+
+{% endblock %}

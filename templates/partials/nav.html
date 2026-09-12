@@ -1,0 +1,89 @@
+<!--Navbar-->
+<nav class="bg-blue-600">
+  {% if user.is_authenticated %}
+  <div class="mx-auto max-w-6xl px-4 flex flex-wrap items-center justify-between py-3">
+    <a class="text-white font-semibold" href="{% url 'dashboard-index' %}"
+      >Keystone Transaction Management Platform</a
+    >
+    <button
+      class="md:hidden text-white"
+      type="button"
+      data-navbar-toggle
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+    </button>
+
+    <div class="hidden md:flex md:items-center md:justify-between w-full md:w-auto" id="navbarSupportedContent">
+      <ul class="flex flex-col md:flex-row md:mr-auto">
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'dashboard-index' %}"
+            >Dashboard <span class="sr-only">(current)</span></a
+          >
+        </li>
+      </ul>
+      <ul class="flex flex-col md:flex-row md:ml-auto">
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'user-profile' %}"
+            >{{user.username}} Profile <span class="sr-only">(current)</span></a
+          >
+        </li>
+        {% if user.is_superuser %}
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'transaction-insights' %}"
+            >Transaction Insights</a
+          >
+        </li>
+        {% endif %}
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'search-resources' %}">Search Resources</a>
+        </li>
+        {% if not user.is_superuser and not user.is_staff %}
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'validation-queue' %}">Validation Queue</a>
+        </li>
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'transaction-session' %}">Transaction Session</a>
+        </li>
+        {% endif %} {% if not user.is_superuser and user.is_staff %}
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'staff-transactions' %}"
+            >Transaction Queue</a
+          >
+        </li>
+        {% endif %}
+        <li>
+          <button type="button" data-theme-toggle class="block w-full text-left text-white px-3 py-2 hover:bg-blue-700 rounded">🌙 Dark</button>
+        </li>
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'user-logout' %}"
+            >Logout</a
+          >
+        </li>
+      </ul>
+      {% else %}
+      <ul class="flex flex-col md:flex-row md:ml-auto">
+        <li>
+          <button type="button" data-theme-toggle class="block w-full text-left text-white px-3 py-2 hover:bg-blue-700 rounded">🌙 Dark</button>
+        </li>
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'user-register' %}"
+            >Register <span class="sr-only">(current)</span></a
+          >
+        </li>
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'staff-application' %}"
+            >Staff Registration <span class="sr-only">(current)</span></a
+          >
+        </li>
+        <li>
+          <a class="block text-white px-3 py-2 hover:bg-blue-700 rounded" href="{% url 'user-login' %}">Login</a>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+<!--End Navbar-->

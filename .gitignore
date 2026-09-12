@@ -1,0 +1,52 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+.eggs/
+.Python
+build/
+dist/
+*.log
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# Node / Tailwind build
+node_modules/
+static/dist/
+
+# Django
+db.sqlite3
+db.sqlite3.bak
+media/
+staticfiles/
+*.mo
+*.pot
+
+# Environment / Secrets
+.env
+.env.*
+*.env
+!.env.example
+# dashboard/GOOGLE_API_KEY
+
+# Coverage / Testing
+htmlcov/
+.coverage
+.coverage.*
+.cache/
+.pytest_cache/

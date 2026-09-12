@@ -1,0 +1,106 @@
+{% extends 'partials/base.html' %} {% block title %}Resource Page{% endblock %}
+{% load crispy_forms_tags %} {% block content %} 
+{%if user.is_authenticated and user.is_staff and user.is_superuser %} 
+{% include 'partials/topnav.html' %} 
+{%endif %}
+<div class="w-full px-4">
+  <div class="flex flex-wrap -mx-2 my-4">
+    <!-- Messages & Resource Form Column -->
+    <div class="w-full md:w-1/3 px-2">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} mt-2">{{ message }}</div>
+      {% endfor %} {% if user.is_authenticated and not user.is_superuser %}
+      <div class="border border-gray-300 bg-gray-100 p-3 shadow-sm">
+        <h4>Register Database Resource</h4>
+        <hr />
+        <form method="POST">
+          {% csrf_token %} {{ form|crispy }}
+          <input
+            class="block w-full text-center px-4 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700 mt-3"
+            type="submit"
+            value="Register Resource"
+          />
+        </form>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Resource Table Column -->
+    <div class="w-full md:w-2/3 px-2">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse bg-white shadow-sm">
+          <thead class="bg-blue-600 text-white">
+            <tr>
+              <th class="px-2 py-1" scope="col">Resource</th>
+              <th class="px-2 py-1" scope="col">Category</th>
+              <th class="px-2 py-1" scope="col">Utilization</th>
+              <th class="px-2 py-1" scope="col">Status</th>
+              <th class="px-2 py-1" scope="col">Activity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+            <tr class="hover:bg-gray-50">
+              <td class="border-b border-gray-200 px-2 py-1">
+                {{ item.name }}
+                <div class="text-xs text-gray-400 font-mono">{{ item.handle }}</div>
+              </td>
+              <td class="border-b border-gray-200 px-2 py-1">
+                {% if item.category == 'Compute' %}
+                <span class="inline-block px-2 py-0.5 text-xs rounded bg-indigo-100 text-indigo-800">Compute</span>
+                {% elif item.category == 'Storage' %}
+                <span class="inline-block px-2 py-0.5 text-xs rounded bg-amber-100 text-amber-800">Storage</span>
+                {% elif item.category == 'Network' %}
+                <span class="inline-block px-2 py-0.5 text-xs rounded bg-sky-100 text-sky-800">Network</span>
+                {% elif item.category == 'Dataset' %}
+                <span class="inline-block px-2 py-0.5 text-xs rounded bg-emerald-100 text-emerald-800">Dataset</span>
+                {% elif item.category == 'Service' %}
+                <span class="inline-block px-2 py-0.5 text-xs rounded bg-fuchsia-100 text-fuchsia-800">Service</span>
+                {% else %}
+                <span class="inline-block px-2 py-0.5 text-xs rounded bg-gray-100 text-gray-700">{{ item.category }}</span>
+                {% endif %}
+              </td>
+              <td class="border-b border-gray-200 px-2 py-1 min-w-[200px]">
+                <div class="w-full bg-gray-200 rounded h-2">
+                  <div
+                    class="h-2 rounded {% if item.utilization >= 90 %}bg-red-500{% elif item.utilization >= 70 %}bg-amber-500{% else %}bg-emerald-500{% endif %}"
+                    style="width: {{ item.utilization|floatformat:0 }}%"
+                  ></div>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">
+                  {{ item.allocated_units }}/{{ item.capacity_units }} {{ item.unit }} allocated &middot; {{ item.available_units }} available &middot; {{ item.utilization|floatformat:0 }}%
+                </div>
+              </td>
+              <td class="border-b border-gray-200 px-2 py-1">
+                {% if not item.is_active %}
+                <span class="inline-block px-2 py-0.5 text-sm rounded bg-gray-200 text-gray-700">Retired</span>
+                {% elif item.available_units == 0 %}
+                <span class="inline-block px-2 py-0.5 text-sm rounded bg-yellow-100 text-yellow-800">Fully allocated</span>
+                {% else %}
+                <span class="inline-block px-2 py-0.5 text-sm rounded bg-green-100 text-green-800">Available</span>
+                {% endif %}
+              </td>
+              <td class="border-b border-gray-200 px-2 py-1">
+                <a
+                  class="inline-block px-3 py-1 text-sm rounded font-medium text-white bg-blue-600 hover:bg-blue-700"
+                  href="{% url 'dashboard-resource-update' item.id %}"
+                  >Edit</a
+                >
+                {% if item.is_active %}
+                <a
+                  class="inline-block px-3 py-1 text-sm rounded font-medium text-white bg-red-600 hover:bg-red-700"
+                  href="{% url 'dashboard-resource-delete' item.id %}"
+                  >Delete</a
+                >
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

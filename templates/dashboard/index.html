@@ -1,0 +1,293 @@
+{% extends 'partials/base.html' %}
+{% block title %} Home Page {% endblock %}
+{% block content %}
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
+
+{% include 'partials/topnav.html' %}
+<!--Transaction Operations Summary-->
+<div class="mx-auto max-w-6xl px-4 mt-5">
+    <h2 class="text-xl font-semibold mb-3">Transaction State Distribution</h2>
+    <div class="flex flex-wrap -mx-2">
+        {% for state, count in transaction_counts.items %}
+        <div class="w-1/2 md:w-1/6 px-2 mb-4">
+            <div class="rounded-lg shadow border border-gray-200 bg-white p-3 text-center">
+                <div class="text-2xl font-bold">{{ count }}</div>
+                <div class="text-sm text-gray-500">{{ state }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2 class="text-xl font-semibold mb-3">Operational Metrics</h2>
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-1/2 md:w-1/6 px-2 mb-4">
+            <div class="rounded-lg shadow border border-gray-200 bg-white p-3 text-center">
+                <div class="text-2xl font-bold">{{ throughput_24h }}</div>
+                <div class="text-sm text-gray-500">Throughput (24h)</div>
+            </div>
+        </div>
+        <div class="w-1/2 md:w-1/6 px-2 mb-4">
+            <div class="rounded-lg shadow border border-gray-200 bg-white p-3 text-center">
+                <div class="text-2xl font-bold">{% if avg_commit_time %}{{ avg_commit_time }}{% else %}&mdash;{% endif %}</div>
+                <div class="text-sm text-gray-500">Avg Commit Time</div>
+            </div>
+        </div>
+        <div class="w-1/2 md:w-1/6 px-2 mb-4">
+            <div class="rounded-lg shadow border border-gray-200 bg-white p-3 text-center">
+                <div class="text-2xl font-bold">{{ resource_utilization|floatformat:1 }}%</div>
+                <div class="text-sm text-gray-500">Resource Utilization</div>
+            </div>
+        </div>
+        <div class="w-1/2 md:w-1/6 px-2 mb-4">
+            <div class="rounded-lg shadow border border-gray-200 bg-white p-3 text-center">
+                <div class="text-2xl font-bold text-green-600">{{ success_rate|floatformat:1 }}%</div>
+                <div class="text-sm text-gray-500">Success Rate</div>
+            </div>
+        </div>
+        <div class="w-1/2 md:w-1/6 px-2 mb-4">
+            <div class="rounded-lg shadow border border-gray-200 bg-white p-3 text-center">
+                <div class="text-2xl font-bold text-red-600">{{ failure_rate|floatformat:1 }}%</div>
+                <div class="text-sm text-gray-500">Failure Rate</div>
+            </div>
+        </div>
+        <div class="w-1/2 md:w-1/6 px-2 mb-4">
+            <div class="rounded-lg shadow border border-gray-200 bg-white p-3 text-center">
+                <div class="text-2xl font-bold text-yellow-600">{{ rollback_rate|floatformat:1 }}%</div>
+                <div class="text-sm text-gray-500">Rollback Rate</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Graphs-->
+<div class="mx-auto max-w-6xl px-4">
+    <div class="flex flex-wrap -mx-2 my-5">
+        <div class="w-full md:w-1/2 px-2">
+            <div class="bg-white">
+                <canvas id="stateDistributionChart" width="400" height="300"></canvas>
+                <script>
+                    var ctxState = document.getElementById('stateDistributionChart').getContext('2d');
+                    var stateChart = new Chart(ctxState, {
+                        type: 'doughnut',
+                        data: {
+                            labels: [{% for state, count in transaction_counts.items %}'{{ state }}',{% endfor %}],
+                            datasets: [{
+                                label: 'Transaction State Distribution',
+                                data: [{% for state, count in transaction_counts.items %}{{ count }},{% endfor %}],
+                                backgroundColor: [
+                                    'rgba(148, 163, 184, 1)',
+                                    'rgba(250, 204, 21, 1)',
+                                    'rgba(56, 189, 248, 1)',
+                                    'rgba(129, 140, 248, 1)',
+                                    'rgba(34, 197, 94, 1)',
+                                    'rgba(234, 179, 8, 1)',
+                                    'rgba(239, 68, 68, 1)'
+                                ]
+                            }]
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="w-full md:w-1/2 px-2">
+            <div class="bg-white">
+                <canvas id="myChart1" width="400" height="300"></canvas>
+                <script>
+                    var ctx = document.getElementById('myChart1').getContext('2d');
+                    var myChart1 = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: [{% for resource in resources %} '{{resource.name}}' ,{% endfor %}],
+                            datasets: [{
+                                label: 'Allocated Capacity',
+                                data: [{% for resource in resources %}'{{ resource.allocated_units}}',{% endfor %}],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="w-full md:w-1/2 px-2">
+            <div class="bg-white">
+                <canvas id="myChart" width="400" height="300"></canvas>
+                <script>
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: [{% for resource in resources %}'{{ resource.name }}',{% endfor%}],
+                            datasets: [{
+                                label: 'Available Capacity',
+                                data: [{% for resource in resources %}'{{ resource.available_units}}',{% endfor %}],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 100, 1)',
+                                    'rgba(54, 116, 235, 1)',
+                                    'rgba(255, 286, 86, 1)',
+                                    'rgba(110, 192, 192, 1)',
+                                    'rgba(153, 160, 255, 1)',
+                                    'rgba(255, 159, 30, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)',
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                    function printStatistics() {
+                        window.print();
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-wrap -mx-2 my-5 justify-center">
+        <div class="w-full md:w-1/2 px-2">
+            <div class="bg-white">
+                <canvas id="capacityGaugeChart" width="400" height="300"></canvas>
+                <script>
+                    var ctxGauge = document.getElementById('capacityGaugeChart').getContext('2d');
+                    var capacityGaugeChart = new Chart(ctxGauge, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Allocated', 'Available'],
+                            datasets: [{
+                                label: 'System-wide Capacity',
+                                data: [{{ capacity_allocated }}, {{ capacity_available }}],
+                                backgroundColor: [
+                                    'rgba(239, 68, 68, 1)',
+                                    'rgba(34, 197, 94, 1)'
+                                ]
+                            }]
+                        },
+                        options: {
+                            title: {
+                                display: true,
+                                text: 'Capacity Allocated vs Available ({{ resource_utilization|floatformat:1 }}% utilized)'
+                            }
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="flex flex-wrap -mx-2 justify-center">
+            <div class="w-full md:w-1/2 px-2 text-center"> <!-- Adjust the column size as needed -->
+                <button class="inline-block px-4 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700 my-8 my-4" onclick="printStatistics()">Print</button>
+                <a href="{% url 'transaction-analytics' %}" class="inline-block px-4 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700">View Allocation Statistics</a>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--End Graphs-->
+{% elif user.is_staff %}
+<script>
+    window.location.href = "{% url 'dashboard-resource' %}";
+</script>
+{% else %}
+{% include 'requester/requester_index.html'%}
+{% endif %}
+{% endblock %}

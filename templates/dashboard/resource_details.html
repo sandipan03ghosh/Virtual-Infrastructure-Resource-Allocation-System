@@ -1,0 +1,60 @@
+
+{% extends 'partials/base.html'%}
+{% block title %} Resource Details Page {% endblock %}
+{% block content %}
+<div class="mx-auto max-w-6xl px-4">
+    <div class="flex flex-wrap -mx-2 justify-center my-4">
+
+        <div class="w-full md:w-2/3 px-2">
+            <div class="border border-gray-300 bg-white p-3">
+                <h3 class="text-center">Resource Details</h3>
+                <hr />
+                <div class="flex flex-wrap -mx-2">
+                    <div class="w-full md:w-1/2 px-2">
+                        <h4>{{ resource.name }}</h4>
+                        <p class="text-xs text-gray-400 font-mono">{{ resource.handle }}</p>
+                        <p><strong>Description: </strong>{{ resource.description }}</p>
+                        <p>
+                            <strong>Category: </strong>
+                            {% if resource.category == 'Compute' %}
+                            <span class="inline-block px-2 py-0.5 text-xs rounded bg-indigo-100 text-indigo-800">Compute</span>
+                            {% elif resource.category == 'Storage' %}
+                            <span class="inline-block px-2 py-0.5 text-xs rounded bg-amber-100 text-amber-800">Storage</span>
+                            {% elif resource.category == 'Network' %}
+                            <span class="inline-block px-2 py-0.5 text-xs rounded bg-sky-100 text-sky-800">Network</span>
+                            {% elif resource.category == 'Dataset' %}
+                            <span class="inline-block px-2 py-0.5 text-xs rounded bg-emerald-100 text-emerald-800">Dataset</span>
+                            {% elif resource.category == 'Service' %}
+                            <span class="inline-block px-2 py-0.5 text-xs rounded bg-fuchsia-100 text-fuchsia-800">Service</span>
+                            {% else %}
+                            <span class="inline-block px-2 py-0.5 text-xs rounded bg-gray-100 text-gray-700">{{ resource.category }}</span>
+                            {% endif %}
+                        </p>
+                        <div class="w-full bg-gray-200 rounded h-2 mt-2">
+                            <div
+                                class="h-2 rounded {% if resource.utilization >= 90 %}bg-red-500{% elif resource.utilization >= 70 %}bg-amber-500{% else %}bg-emerald-500{% endif %}"
+                                style="width: {{ resource.utilization|floatformat:0 }}%"
+                            ></div>
+                        </div>
+                        <p class="text-sm text-gray-500">
+                            {{ resource.available_units }} / {{ resource.capacity_units }} {{ resource.unit }} available &middot; {{ resource.utilization|floatformat:0 }}% utilized
+                        </p>
+                        {%if user.is_staff and user.is_superuser %}
+                            <p><strong>Allocated: </strong>{{ resource.allocated_units }} {{ resource.unit }}</p>
+                        {%endif%}
+                        {% if user.is_staff and user.is_superuser %}
+                        <a href="{% url 'dashboard-resource-update' resource.id %}" class="inline-block px-4 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700">Update</a>
+                        <a href="{% url 'dashboard-resource-delete' resource.id %}" class="inline-block px-4 py-2 rounded font-medium text-white bg-red-600 hover:bg-red-700">Delete</a>
+                        {% endif %}
+                        {% if user.is_staff and not user.is_superuser%}
+                        <a href="{% url 'staff-resource-update' resource.id %}" class="inline-block px-4 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700">Update</a>
+                        <a href="{% url 'staff-resource-delete' resource.id %}" class="inline-block px-4 py-2 rounded font-medium text-white bg-red-600 hover:bg-red-700">Delete</a>
+                        {% endif %}
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

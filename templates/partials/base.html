@@ -1,0 +1,58 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--Apply saved/OS theme before first paint to avoid a light/dark flash-->
+    <script>
+      (function () {
+        var saved = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+    <!--Chartjs CDN-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <!--Tailwind CSS (built via npm run build:css)-->
+    <link rel="stylesheet" href="{% static 'dist/style.css' %}">
+
+    <title>{% block title %} {% endblock %} | Keystone Transaction Management Platform</title>
+  </head>
+  <body class="bg-neutral-200">
+    <div>
+    {% include 'partials/nav.html' %}
+
+    {% comment %} {% include 'partials/topnav.html' %} {% endcomment %}
+
+    {% block content %}
+
+    {% endblock %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var toggler = document.querySelector('[data-navbar-toggle]');
+        var panel = document.getElementById('navbarSupportedContent');
+        if (toggler && panel) {
+          toggler.addEventListener('click', function () {
+            var isHidden = panel.classList.toggle('hidden');
+            toggler.setAttribute('aria-expanded', String(!isHidden));
+          });
+        }
+
+        var themeToggle = document.querySelector('[data-theme-toggle]');
+        if (themeToggle) {
+          themeToggle.addEventListener('click', function () {
+            var isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            themeToggle.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+          });
+          themeToggle.textContent = document.documentElement.classList.contains('dark') ? '☀️ Light' : '🌙 Dark';
+        }
+      });
+    </script>
+  </div>
+  </body>
+</html>

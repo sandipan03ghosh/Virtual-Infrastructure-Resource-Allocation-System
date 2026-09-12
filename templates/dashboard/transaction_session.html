@@ -1,0 +1,46 @@
+{% extends 'partials/base.html'%}
+{% block title %} Transaction Session {% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<!--Table-->
+<div class="mx-auto max-w-6xl px-4">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full px-2">
+            <h1 class="text-center">Transaction Session</h1>
+            {% if session_count %}
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr>
+                        <th class="border-b border-gray-200 px-2 py-1">Resource</th>
+                        <th class="border-b border-gray-200 px-2 py-1">Requested Units</th>
+                        <th class="border-b border-gray-200 px-2 py-1">Unit</th>
+                        <th class="border-b border-gray-200 px-2 py-1">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in session_transactions %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="border-b border-gray-200 px-2 py-1">{{ item.resource.name }}</td>
+                        <td class="border-b border-gray-200 px-2 py-1">{{ item.requested_units }}</td>
+                        <td class="border-b border-gray-200 px-2 py-1">{{ item.resource.unit }}</td>
+                        <td class="border-b border-gray-200 px-2 py-1">
+                            <a href="{% url 'rollback-transaction' item.resource.id %}" class="inline-block px-4 py-2 rounded font-medium text-white bg-red-600 hover:bg-red-700">Remove</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{% url 'rollback-all-transactions' %}" class="inline-block px-4 py-2 rounded font-medium text-white bg-red-600 hover:bg-red-700">Rollback All</a>
+            <a href="{% url 'submit-for-validation' %}" class="inline-block px-4 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700">Submit for Validation</a>
+            {% else %}
+            {% comment %} A warning that the transaction session is empty {% endcomment %}
+            <div class="px-4 py-3 rounded border border-yellow-300 bg-yellow-50 text-yellow-800 mt-5" role="alert">
+                <strong>Warning!</strong> Your transaction session is empty.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

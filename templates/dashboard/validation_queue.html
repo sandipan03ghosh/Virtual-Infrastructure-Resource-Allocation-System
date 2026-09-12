@@ -1,0 +1,48 @@
+{% extends 'partials/base.html'%}
+{% block title %} Validation Queue {% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <div class="mx-auto max-w-6xl px-4">
+        {%if counter_orders %}
+          <p
+            class="text-center text-sky-600 mt-4 mb-4 bg-gray-100 p-2 border border-sky-400 rounded shadow-sm"
+          >
+            You have {{ counter_orders }} transactions pending validation by a Database Administrator.
+          </p>
+        {% endif %}
+        {% if accepted_orders %}
+        <div class="flex flex-wrap -mx-2">
+            <div class="w-full md:w-1/2 px-2">
+                <h3>Orders</h3>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="border-b border-gray-200 px-2 py-1">Resource</th>
+                            <th class="border-b border-gray-200 px-2 py-1">Requested Units</th>
+                            <th class="border-b border-gray-200 px-2 py-1">Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in accepted_orders %}
+                        <tr class="even:bg-gray-50">
+                            <td class="border-b border-gray-200 px-2 py-1">{{ item.resource.name }}</td>
+                            <td class="border-b border-gray-200 px-2 py-1">{{ item.requested_units }}</td>
+                            <td class="border-b border-gray-200 px-2 py-1">{{ item.resource.unit }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <a href="{% url 'review-commit' %}" class="inline-block px-4 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700">Proceed to Commit</a>
+    </div>
+    {% else %}
+    <div class="mx-auto max-w-6xl px-4">
+        <p class="text-center text-sky-600 mt-4 mb-4 bg-gray-100 p-2 border border-sky-400 rounded shadow-sm">
+            You have no validated transactions yet. Submit a transaction session or wait for a Database Administrator to validate it.
+        </p>
+    </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

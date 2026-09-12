@@ -1,0 +1,63 @@
+{% extends 'partials/base.html' %}
+{% block title %} Login Page {% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+  body {
+    background-color: #f0f0f0; /* Change to desired background color */
+  }
+  .login-container {
+    background-color: #ffffff; /* Change to desired container background color */
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+    padding: 20px;
+    margin-top: 50px;
+  }
+  .google-btn-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; /* Adjust spacing between the button and the link */
+  }
+  .google-btn {
+    background-color: #00ab41; /* Google blue color */
+    color: #fff;
+    border: none;
+    padding: 10px 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+  }
+  .google-icon {
+    margin-right: 10px; /* Spacing between the icon and text */
+  }
+</style>
+<div class="mx-auto max-w-6xl px-4">
+  <div class="flex flex-wrap -mx-2 justify-center">
+    <div class="w-full md:w-1/2 px-2">
+      {% for message in messages %} {% if message %}
+      <div class="alert alert-{{message.tags}}">{{message}}</div>
+      {% endif %} {% endfor %}
+      <div class="login-container">
+        <h3 class="mb-4"><b>Login Page</b></h3>
+        <form method="POST">
+          {% csrf_token %} {{ form|crispy }}
+          <div class="google-btn-container">
+            <a href="{% url 'social:begin' 'google-oauth2' %}?next=/dashboard/" class="google-btn">
+             Login With Google
+            </a>
+            <a href="{% url 'password-reset' %}">Forget Password?</a>
+          </div>
+          <div class="mt-4 mb-4">
+            <input class="block w-full text-center px-4 py-2 rounded font-medium text-white bg-green-600 hover:bg-green-700" type="submit" value="Login" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

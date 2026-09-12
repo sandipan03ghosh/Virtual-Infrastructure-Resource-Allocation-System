@@ -1,0 +1,36 @@
+{% extends 'partials/base.html'%}
+{% block title %} Transaction Analytics Page {% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+<!--Table-->
+<div class="mx-auto max-w-6xl px-4">
+    <div class="flex flex-wrap -mx-2 my-4">
+        <div class="w-full md:w-1/2 px-2 md:ml-[25%]">
+            <h2 class="text-center">Allocation Statistics</h2>
+            <table class="w-full text-left border-collapse bg-white">
+                <thead>
+                    <tr>
+                        <th class="border-b border-gray-200 px-2 py-1">Resource</th>
+                        <th class="border-b border-gray-200 px-2 py-1">Category</th>
+                        <th class="border-b border-gray-200 px-2 py-1">Allocated Units</th>
+                        <th class="border-b border-gray-200 px-2 py-1">Committed Transactions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in statistics %}
+                    <tr>
+                        <td class="border-b border-gray-200 px-2 py-1">{{ item.resource }}</td>
+                        <td class="border-b border-gray-200 px-2 py-1">{{ item.category }}</td>
+                        <td class="border-b border-gray-200 px-2 py-1">{{ item.allocated_units }}</td>
+                        <td class="border-b border-gray-200 px-2 py-1">{{ item.transaction_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'partials/base.html' %}
+{% block title %} Register Page {% endblock  %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    .register-container {
+        background-color: #ffffff; /* Change to desired container background color */
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+        padding: 20px;
+        margin-top: 10px;
+      }
+</style>
+<div class="mx-auto max-w-6xl px-4">
+<div class="flex flex-wrap -mx-2 mt-5">
+    <div class="w-full md:w-1/2 px-2 md:ml-[25%]">
+        <div class="register-container">
+        <div class="border border-gray-300 bg-white p-3">
+            <h3><b> Registration Page</b></h3>
+            <hr>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input class="inline-block px-4 py-2 rounded font-medium text-white bg-green-600 hover:bg-green-700" type="submit" value="Register">
+            </form>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

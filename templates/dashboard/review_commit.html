@@ -1,0 +1,28 @@
+{% extends 'partials/base.html'%}
+{% block title %} Commit Review {% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<!--Table-->
+<div class="mx-auto max-w-6xl px-4">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full px-2">
+            {% comment %} Total amount and make payment button {% endcomment %}
+            <div class="flex flex-wrap -mx-2 p-3">
+                <div class="w-full md:w-1/2 px-2">
+                    <h3>Total Units to Allocate: <span class="text-sky-700">{{ total_units }}</span></h3>
+                </div>
+                {% if total_units %}
+                <div class="w-full md:w-1/2 px-2">
+                    <form method="POST" action="{% url 'commit-transactions' %}" class="float-right">
+                        {% csrf_token %}
+                        <button type="submit" class="inline-block px-4 py-2 rounded font-medium text-white bg-blue-600 hover:bg-blue-700">Commit Transactions</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
